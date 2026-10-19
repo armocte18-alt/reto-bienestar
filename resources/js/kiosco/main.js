@@ -354,7 +354,7 @@ function pantallaHub() {
             ? `<span class="estado-juego">Suma puntos · partida ${usadas + 1} de ${max}</span>`
             : `<span class="estado-juego practica">Modo práctica · ya sumaste tus puntos aquí</span>`;
         return `
-            <button class="juego-card ${clave}" data-juego="${clave}">
+            <button class="juego-card jc-${clave}" data-juego="${clave}">
                 <span class="ilustra" aria-hidden="true">${info.icono}</span>
                 <h3>${esc(clave === 'clasifica' ? tituloClasifica : info.nombre)}</h3>
                 <p>${esc(info.desc[j.grupo] ?? info.desc.otro)}</p>
