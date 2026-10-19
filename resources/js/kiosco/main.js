@@ -7,7 +7,15 @@ import { clasifica } from './juegos/clasifica.js';
 import { memorama } from './juegos/memorama.js';
 
 const app = document.getElementById('app');
-const URL_STAFF = (app.dataset.api ?? '/api').replace(/\/api$/, '/staff');
+const RAIZ = (app.dataset.api ?? '/api').replace(/\/api$/, '');
+const URL_STAFF = `${RAIZ}/staff`;
+
+// Imagen institucional. Para actualizarlas basta con reemplazar los archivos en public/img.
+const IMG_FIBI = `${RAIZ}/img/fibi.png`;
+document.documentElement.style.setProperty('--foto-sucursal', `url("${RAIZ}/img/sucursal.jpg")`);
+const PANTALLAS_SUCURSAL = ['inicio', 'registro', 'codigo', 'codigo-nuevo'];
+const fibi = (clase, alt = 'FIBI, imagen institucional de FINABIEN') =>
+    `<img class="${clase}" src="${IMG_FIBI}" alt="${alt}" onerror="this.hidden=true">`;
 
 const S = {
     config: null,
@@ -68,6 +76,7 @@ function limpiar() {
 function mostrar(nombre, html) {
     limpiar();
     S.pantalla = nombre;
+    document.body.classList.toggle('con-sucursal', PANTALLAS_SUCURSAL.includes(nombre));
     app.innerHTML = `<div class="pantalla">${html}</div>`;
     scrollTo(0, 0);
     return app.firstElementChild;
@@ -114,9 +123,12 @@ function pantallaInicio() {
                 <div class="grupos-mini">
                     ${grupos.map(([k, g]) => `<span class="pildora grupo ${GRUPO_CLASE[k]}">${esc(g.nombre)} · ${esc(g.rango)}</span>`).join('')}
                 </div>
-                <div class="panel sabias" aria-live="polite">
-                    <p class="etiqueta">¿Sabías que…?</p>
-                    <p data-dato>${esc(DATOS[0])}</p>
+                <div class="fibi-dice">
+                    ${fibi('fibi-foto')}
+                    <div class="globo" aria-live="polite">
+                        <p class="etiqueta">FIBI te cuenta</p>
+                        <p data-dato>${esc(DATOS[0])}</p>
+                    </div>
                 </div>
             </section>
             <aside class="lado">
@@ -270,7 +282,10 @@ function pantallaCodigoNuevo() {
             ${avatar(j.avatar, j.grupo).replace('class="avatar', 'style="width:6rem;height:6rem;font-size:3.6rem" class="avatar')}
             <h2>¡Hola, ${esc(j.nombre)}!</h2>
             <span class="pildora grupo ${GRUPO_CLASE[j.grupo]}">Grupo ${esc(g.nombre)} · ${esc(g.rango)}</span>
-            <p>Este es tu código. Tómale foto o anótalo: con él sigues juntando puntos en cualquier pantalla del stand.</p>
+            <div class="fibi-linea">
+                ${fibi('fibi-mini')}
+                <p>Soy FIBI. Este es tu código: tómale foto o anótalo para seguir juntando puntos en cualquier pantalla del stand.</p>
+            </div>
             <div class="codigo-grande" aria-label="Tu código">${esc(j.codigo)}</div>
             <button class="btn btn-xl" data-continuar>Ver los juegos</button>
         </div></div>`);
@@ -473,6 +488,7 @@ function pantallaResultado(resumen, repaso = []) {
 
     const el = mostrar('resultado', `
         <div class="resultado"><div class="caja">
+            ${fibi('fibi-mini fibi-festeja')}
             <h2>${titulo}</h2>
             <div class="grande"><span class="moneda" aria-hidden="true"></span>${r.cuenta_puntos ? '+' : ''}${fmt(r.puntos)}</div>
             ${detalle}

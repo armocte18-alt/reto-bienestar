@@ -139,8 +139,8 @@ h1, h2, h3, .display { font-family: var(--display); font-weight: 400; letter-spa
 
 /* ---------- Inicio ---------- */
 .inicio-grid { flex: 1; display: grid; grid-template-columns: 1.15fr .85fr; gap: 2rem; align-items: stretch; }
-.hero { display: flex; flex-direction: column; justify-content: center; gap: 1.3rem; }
-.hero h1 { font-size: clamp(3rem, min(6.5vw, 11vh), 7.5rem); color: var(--texto); }
+.hero { display: flex; flex-direction: column; justify-content: center; gap: 1.1rem; }
+.hero h1 { font-size: clamp(3rem, min(6vw, 9.5vh), 7.5rem); color: var(--texto); }
 .hero h1 span { color: var(--oro); display: block; }
 .hero .lema { font-size: 1.5rem; color: var(--texto-2); max-width: 30ch; }
 .hero .acciones { display: flex; flex-wrap: wrap; gap: 1rem; }
@@ -148,6 +148,42 @@ h1, h2, h3, .display { font-family: var(--display); font-weight: 400; letter-spa
 .sabias { border-left: .4rem solid var(--oro); min-height: 6.5rem; }
 .sabias p { margin: .3rem 0 0; font-size: 1.2rem; }
 .lado { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
+
+/* Foto de la sucursal: entra por la derecha y se funde con el verde para no restar legibilidad. */
+body.con-sucursal {
+    background-image:
+        /* La foto mide 64.8vh de ancho a altura completa: el degradado arranca justo en su borde. */
+        linear-gradient(90deg, var(--fondo) 0, var(--fondo) max(40%, calc(100vw - 64.8vh)), rgb(15 46 41 / .78) max(62%, calc(100vw - 34vh)), rgb(15 46 41 / .5) 100%),
+        var(--foto-sucursal, none);
+    background-size: auto, auto 100%;
+    background-position: 0 0, right center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+body.con-sucursal .lado .panel { background: rgb(27 74 66 / .86); backdrop-filter: blur(6px); }
+
+/* FIBI, imagen institucional. */
+.fibi-dice { display: flex; align-items: flex-end; gap: 1.1rem; }
+.fibi-foto {
+    flex: none; width: clamp(6.5rem, min(9vw, 14vh), 10rem); aspect-ratio: 398 / 507; object-fit: cover;
+    border-radius: 1.4rem; border: .25rem solid var(--oro); background: var(--panel); box-shadow: var(--sombra);
+}
+.globo { position: relative; flex: 1; min-width: 0; margin-bottom: 1.2rem; padding: 1rem 1.3rem; border-radius: 1.4rem; background: var(--texto); color: var(--tinta); }
+.globo::before {
+    content: ''; position: absolute; left: -.9rem; bottom: 1.4rem;
+    border-style: solid; border-width: .6rem .95rem .6rem 0; border-color: transparent var(--texto) transparent transparent;
+}
+.globo p { margin: 0; }
+.globo .etiqueta { color: var(--oro-osc); }
+.globo [data-dato] { margin-top: .3rem; font-size: 1.2rem; font-weight: 700; }
+.fibi-mini {
+    flex: none; width: 6.5rem; height: 6.5rem; border-radius: 50%; object-fit: cover; object-position: 50% 10%;
+    border: .25rem solid var(--oro); background: var(--panel);
+}
+.fibi-linea { display: flex; align-items: center; gap: 1rem; max-width: 46rem; padding: .8rem 1.3rem .8rem .8rem; border-radius: 1.4rem; background: rgb(0 0 0 / .22); text-align: left; }
+.fibi-linea p { margin: 0; }
+.fibi-festeja { animation: salta 700ms ease-out; }
+@keyframes salta { 40% { transform: translateY(-.7rem) rotate(-4deg); } }
 .ranking ol { list-style: none; margin: .8rem 0 0; padding: 0; display: grid; gap: .5rem; }
 .ranking li { display: flex; align-items: center; gap: .8rem; padding: .45rem .7rem; border-radius: .8rem; background: rgb(0 0 0 / .14); font-size: 1.1rem; }
 .ranking li .avatar { width: 2.4rem; height: 2.4rem; font-size: 1.35rem; }
