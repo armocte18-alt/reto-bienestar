@@ -4,9 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('titulo', 'Panel') · Reto Finabien</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @vite(['resources/css/app.css'])
 </head>
 <body class="min-h-screen bg-billete-100 text-billete-950 antialiased">
+    <div class="border-b border-oro-400/40 bg-white">
+        <div class="mx-auto max-w-6xl px-4 py-2">
+            <img src="{{ asset('img/logo-hacienda-finabien.png') }}" alt="Secretaría de Hacienda y Crédito Público · Financiera para el Bienestar" class="h-10 w-auto sm:h-12">
+        </div>
+    </div>
     <header class="bg-billete-900 text-white">
         <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
             <a href="{{ route('staff.inicio') }}" class="text-lg font-bold">Reto Finabien <span class="font-normal text-oro-400">· Staff</span></a>

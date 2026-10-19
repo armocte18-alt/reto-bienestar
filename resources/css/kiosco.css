@@ -26,6 +26,7 @@
     --bien: #5fd982;
     --mal: #ff6b5b;
     --tinta: #10241f;          /* texto sobre botones claros */
+    --blanco: #ffffff;         /* fondo de logotipos y comprobantes */
 
     --display: 'Lilita One', 'Arial Rounded MT Bold', 'Trebuchet MS', system-ui, sans-serif;
     --cuerpo: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
@@ -161,6 +162,22 @@ body.con-sucursal {
     background-attachment: fixed;
 }
 body.con-sucursal .lado .panel { background: rgb(27 74 66 / .86); backdrop-filter: blur(6px); }
+
+/* Logotipos institucionales: su tipografía guinda y verde necesita fondo blanco. */
+.inicio-grid { grid-template-areas: "hero logo" "hero lado"; grid-template-rows: auto 1fr; }
+.inicio-grid > .hero { grid-area: hero; }
+.inicio-grid > .logo-inst { grid-area: logo; }
+.inicio-grid > .lado { grid-area: lado; }
+.logo-inst { display: flex; align-items: center; justify-content: center; padding: .9rem 1.4rem; border-radius: var(--radio); background: var(--blanco); box-shadow: var(--sombra); }
+.logo-inst img { display: block; width: 100%; max-width: 34rem; height: auto; }
+
+.boleto {
+    display: grid; gap: .4rem; justify-items: center; padding: 1.3rem 1.5rem; border-radius: 1rem;
+    background: var(--blanco); color: var(--tinta); border: .2rem dashed var(--oro-osc);
+}
+.boleto img { width: min(100%, 16rem); height: auto; margin-bottom: .4rem; }
+.boleto .etiqueta { color: var(--oro-osc); }
+.boleto .folio { font-family: var(--display); font-weight: 400; font-size: 3.4rem; letter-spacing: .12em; line-height: 1; }
 
 /* FIBI, imagen institucional. */
 .fibi-dice { display: flex; align-items: flex-end; gap: 1.1rem; }
@@ -413,6 +430,7 @@ body.con-sucursal .lado .panel { background: rgb(27 74 66 / .86); backdrop-filte
 /* ---------- Tablet vertical y pantallas angostas ---------- */
 @media (max-width: 1100px) {
     .inicio-grid, .hub { grid-template-columns: 1fr; }
+    .inicio-grid { grid-template-areas: "logo" "hero" "lado"; grid-template-rows: auto; }
     .juegos { grid-template-columns: 1fr; }
     .juego-card { flex-direction: row; align-items: center; flex-wrap: wrap; }
     .juego-card .ilustra { font-size: 3.4rem; }

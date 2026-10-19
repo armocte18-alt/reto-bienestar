@@ -112,6 +112,9 @@ function pantallaInicio() {
     const grupos = Object.entries(c.grupos);
     const el = mostrar('inicio', `
         <div class="inicio-grid">
+            <div class="logo-inst">
+                <img src="${RAIZ}/img/logo-hacienda-finabien.png" alt="Secretaría de Hacienda y Crédito Público · Financiera para el Bienestar">
+            </div>
             <section class="hero">
                 <p class="etiqueta">${esc(c.evento?.nombre ?? 'Educación financiera')}${c.evento?.sede ? ` · ${esc(c.evento.sede)}` : ''}</p>
                 <h1>Reto <span>Finabien</span></h1>
@@ -555,8 +558,13 @@ function confirmarCanje(premio) {
             pantallaPremios();
             const ok = modal(`
                 <h2>¡Premio canjeado!</h2>
-                <p>Muestra este folio en el stand para recibir tu ${esc(premio.nombre.toLowerCase())}:</p>
-                <div class="codigo-grande" style="font-size:3.6rem;justify-self:center">${esc(r.folio)}</div>
+                <p>Muestra este comprobante en el stand para recibir tu premio.</p>
+                <div class="boleto">
+                    <img src="${RAIZ}/img/logo-finabien.png" alt="Financiera para el Bienestar">
+                    <span class="etiqueta">Folio de canje</span>
+                    <strong class="folio">${esc(r.folio)}</strong>
+                    <span>${esc(premio.icono ?? '')} ${esc(premio.nombre)} · ${esc(S.jugador.nombre)} · ${esc(S.jugador.codigo)}</span>
+                </div>
                 <button class="btn btn-xl" data-ok>Listo</button>`);
             ok.querySelector('[data-ok]').addEventListener('click', () => ok.remove());
         } catch (e) {
