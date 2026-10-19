@@ -96,7 +96,7 @@ class KioscoController extends Controller
         ]);
 
         $respuesta = $datos['respuesta'] ?? null;
-        if ($partida->juego === 'trivia' && $respuesta !== null) {
+        if (in_array($partida->juego, ['trivia', 'emprendedor'], true) && $respuesta !== null) {
             $respuesta = (int) $respuesta;
         }
 
@@ -108,6 +108,15 @@ class KioscoController extends Controller
         $datos = $request->validate([
             'movimientos' => ['nullable', 'integer', 'min:0', 'max:500'],
             'segundos' => ['nullable', 'integer', 'min:0', 'max:3600'],
+            // Arcade: índices de las piezas que el jugador tocó.
+            'recogidos' => ['nullable', 'array', 'max:300'],
+            'recogidos.*' => ['integer', 'min:0'],
+            'golpes' => ['nullable', 'array', 'max:300'],
+            'golpes.*' => ['integer', 'min:0'],
+            'pagados' => ['nullable', 'array', 'max:300'],
+            'pagados.*' => ['integer', 'min:0'],
+            'decisiones' => ['nullable', 'array', 'max:300'],
+            'decisiones.*' => ['nullable', Rule::in(['colchon', 'antojo', 'ahorro'])],
         ]);
 
         return response()->json($this->motor->terminar($partida, $datos));

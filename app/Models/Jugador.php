@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\MotorJuegos;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -67,7 +68,7 @@ class Jugador extends Model
             ->selectRaw('juego, count(*) as total')->groupBy('juego')
             ->pluck('total', 'juego')->all();
 
-        return array_merge(['trivia' => 0, 'clasifica' => 0, 'memorama' => 0], array_map('intval', $conteo));
+        return array_merge(array_fill_keys(MotorJuegos::JUEGOS, 0), array_map('intval', $conteo));
     }
 
     public function paraKiosco(): array

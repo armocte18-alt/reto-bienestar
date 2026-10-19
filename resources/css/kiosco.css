@@ -25,6 +25,7 @@
     --agua-osc: #1f9488;
     --bien: #5fd982;
     --mal: #ff6b5b;
+    --lila: #c7b6ff;
     --tinta: #10241f;          /* texto sobre botones claros */
     --blanco: #ffffff;         /* fondo de logotipos y comprobantes */
 
@@ -275,24 +276,32 @@ body.con-sucursal .lado .panel { background: rgb(27 74 66 / .86); backdrop-filte
 .jugador-barra .codigo { color: var(--texto-2); font-size: .95rem; }
 .jugador-barra .puntos { font-size: 2.6rem; }
 .hub { flex: 1; display: grid; grid-template-columns: 1fr 22rem; gap: 1.5rem; }
-.juegos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.juegos { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
+.juegos-fila { display: grid; gap: .55rem; }
+.juegos-fila > h2 { font-family: var(--cuerpo); font-size: .8rem; }
+.juegos-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.juegos-grid.n4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .juego-card {
     --c: var(--oro);
-    position: relative; display: flex; flex-direction: column; gap: .8rem; text-align: left;
-    padding: 1.5rem; border: 0; border-radius: 1.6rem;
+    position: relative; display: flex; flex-direction: column; gap: .5rem; text-align: left;
+    padding: 1.1rem 1.2rem; border: 0; border-radius: 1.4rem;
     background: linear-gradient(180deg, var(--panel-2), var(--panel)); color: var(--texto);
     box-shadow: 0 .5rem 0 rgb(0 0 0 / .3), inset 0 .35rem 0 var(--c);
     transition: transform var(--t); touch-action: manipulation;
 }
 .juego-card:hover { transform: translateY(-.25rem); }
 .juego-card:active { transform: translateY(.2rem); }
-.juego-card .ilustra { font-size: 4.5rem; line-height: 1; font-family: var(--emoji); }
-.juego-card h3 { font-size: 2rem; color: var(--c); }
-.juego-card p { margin: 0; color: var(--texto-2); font-size: 1.05rem; flex: 1; }
+.juego-card .ilustra { font-size: 3rem; line-height: 1; font-family: var(--emoji); }
+.juego-card h3 { font-size: 1.55rem; color: var(--c); }
+.juego-card p { margin: 0; color: var(--texto-2); font-size: .95rem; flex: 1; }
 .juego-card.jc-trivia { --c: var(--oro); }
 .juego-card.jc-clasifica { --c: var(--rosa); }
 .juego-card.jc-memorama { --c: var(--agua); }
-.estado-juego { font-weight: 700; font-size: .95rem; }
+.juego-card.jc-remesa { --c: var(--agua); }
+.juego-card.jc-cosecha { --c: var(--bien); }
+.juego-card.jc-emprendedor { --c: var(--oro); }
+.juego-card.jc-maraton { --c: var(--lila); }
+.estado-juego { font-weight: 700; font-size: .85rem; }
 .estado-juego.practica { color: var(--texto-2); }
 .meta-premio h3 { font-size: 1.5rem; margin: .3rem 0 .8rem; }
 .meta-premio .falta { color: var(--texto-2); margin: .5rem 0 1rem; }
@@ -398,6 +407,168 @@ body.con-sucursal .lado .panel { background: rgb(27 74 66 / .86); backdrop-filte
 .carta.sacude .frente { animation: sacude 360ms; }
 @keyframes sacude { 25% { translate: -.4rem 0; } 75% { translate: .4rem 0; } }
 
+/* ---------- Arcades: piezas comunes ---------- */
+.cuenta-regresiva {
+    position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; pointer-events: none;
+    font-family: var(--display); font-size: clamp(5rem, 14vw, 11rem); color: var(--oro); text-shadow: 0 .4rem 0 rgb(0 0 0 / .45);
+}
+.cuenta-regresiva.late { animation: late 650ms ease-out; }
+@keyframes late { from { transform: scale(1.6); opacity: 0; } 40% { opacity: 1; } }
+.evento-linea { margin: 0; min-height: 2.6em; text-align: center; font-weight: 700; font-size: 1.15rem; color: var(--texto); }
+.evento-linea.mal { color: #ffb4a9; }
+
+/* ---------- El viaje de la remesa ---------- */
+.ruta { display: flex; align-items: center; gap: 1rem; font-weight: 700; color: var(--texto-2); }
+.ruta-linea { flex: 1; height: .5rem; border-radius: 999px; background: repeating-linear-gradient(90deg, var(--linea) 0 1rem, transparent 1rem 1.6rem); }
+.ruta-linea i { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--oro); }
+.remesa {
+    position: relative; flex: 1; min-height: 18rem; overflow: hidden; touch-action: none;
+    display: grid; grid-template-rows: repeat(3, 1fr);
+    border-radius: 1.6rem; background: linear-gradient(180deg, #24433d, #1a352f);
+    box-shadow: inset 0 0 0 .25rem var(--linea);
+}
+.remesa .carril + .carril { border-top: .25rem dashed rgb(255 255 255 / .14); }
+/* Tarjeta con los colores institucionales guinda y verde. */
+.tarjeta-fb {
+    position: absolute; left: 13%; top: 50%; z-index: 2; translate: -50% -50%;
+    width: clamp(6.5rem, 11vw, 10rem); aspect-ratio: 1.586; display: grid; align-content: space-between; padding: .55rem .7rem;
+    border-radius: .8rem; background: linear-gradient(135deg, #9d2449 0%, #6f1d38 55%, #235b4e 100%); color: #fff;
+    box-shadow: 0 .4rem 0 rgb(0 0 0 / .35), inset 0 0 0 .12rem rgb(255 255 255 / .25);
+    transition: top 140ms ease-out;
+}
+.tarjeta-fb::before { content: ""; width: 1.6rem; height: 1.1rem; border-radius: .25rem; background: linear-gradient(135deg, #ffe39a, var(--oro-osc)); }
+.tarjeta-fb b { font-family: var(--display); font-weight: 400; font-size: 1.05rem; letter-spacing: .04em; }
+.tarjeta-fb small { font-size: .7rem; opacity: .85; }
+.tarjeta-fb.sacudida { animation: sacude 360ms; }
+.tarjeta-fb.llega { transition: left 900ms ease-in; left: 92%; }
+.pieza {
+    position: absolute; z-index: 1; translate: -50% -50%; display: grid; justify-items: center; gap: .1rem;
+    padding: .4rem .6rem; border-radius: 1rem; background: rgb(0 0 0 / .25);
+}
+.pieza .emoji { font-size: clamp(2.2rem, 4vw, 3.4rem); }
+.pieza .corto { font-family: var(--display); font-size: 1.1rem; padding: 0 .5rem; border-radius: 999px; color: var(--tinta); }
+.pieza.buena .corto { background: var(--bien); }
+.pieza.mala .corto { background: var(--mal); }
+.pieza.recogida { animation: recoge 260ms ease-out forwards; }
+.pieza.golpe { animation: golpe 380ms ease-out forwards; }
+@keyframes recoge { to { scale: .2; opacity: 0; } }
+@keyframes golpe { 30% { scale: 1.35; } to { scale: 1.1; opacity: 0; } }
+
+/* ---------- Cosecha tu ahorro ---------- */
+.cosecha { position: relative; flex: 1; display: grid; grid-template-rows: 1fr auto; gap: 1.25rem; }
+.ingreso-zona { display: grid; place-items: center; min-height: 11rem; }
+.ingreso {
+    position: relative; display: grid; justify-items: center; gap: .3rem; overflow: hidden;
+    padding: 1.2rem 2.4rem 1.6rem; border-radius: 1.6rem; background: var(--texto); color: var(--tinta);
+    box-shadow: 0 .6rem 0 rgb(0 0 0 / .35); animation: llega 200ms ease-out;
+}
+.ingreso .moneda { font-size: 3.2rem; }
+.ingreso b { font-family: var(--display); font-weight: 400; font-size: clamp(2.4rem, 4.5vw, 3.6rem); line-height: 1; }
+.ingreso span:not(.moneda) { font-weight: 700; font-size: 1.15rem; }
+.ingreso .vida { position: absolute; left: 0; bottom: 0; height: .5rem; width: 100%; background: var(--oro-osc); transform-origin: left; animation: vida var(--vida) linear forwards; }
+@keyframes vida { to { transform: scaleX(0); } }
+.ingreso.va-colchon { animation: va-a 260ms ease-in forwards; }
+.ingreso.va-antojo { animation: baja 260ms ease-in forwards; }
+.ingreso.va-ahorro { animation: va-b 260ms ease-in forwards; }
+@keyframes baja { to { transform: translateY(60%) scale(.5); opacity: 0; } }
+.se-fue { font-family: var(--display); font-size: 1.8rem; color: var(--texto-2); animation: entra 200ms ease-out; }
+.macetas { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 1.25rem; }
+.maceta {
+    --c: var(--texto-2);
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem;
+    min-height: 13rem; padding: 1rem; border: .3rem solid var(--c); border-radius: 1.8rem;
+    background: rgb(0 0 0 / .16); color: var(--texto); text-align: center; touch-action: manipulation;
+    transition: transform var(--t), background var(--t);
+}
+.maceta .emoji { font-size: clamp(3rem, 5.5vw, 4.6rem); }
+.maceta b { font-family: var(--display); font-weight: 400; font-size: 1.6rem; color: var(--c); }
+.maceta small { color: var(--texto-2); font-weight: 700; }
+.maceta .monto { font-family: var(--display); font-size: 2rem; font-variant-numeric: tabular-nums; }
+.maceta kbd { position: absolute; top: .6rem; right: .8rem; font: 700 .8rem var(--cuerpo); color: var(--texto-2); border: .1rem solid var(--linea); border-radius: .35rem; padding: 0 .35rem; }
+.maceta:active, .maceta.pulso { transform: scale(.97); background: rgb(255 255 255 / .08); }
+.maceta.sacude { animation: sacude 360ms; }
+.m-colchon { --c: var(--agua); }
+.m-antojo { --c: var(--rosa); }
+.m-ahorro { --c: var(--bien); background: rgb(95 217 130 / .1); }
+.comparativa { display: grid; gap: .6rem; width: 100%; text-align: left; }
+.fila-comp { display: grid; grid-template-columns: 11rem 1fr 7rem; align-items: center; gap: .3rem 1rem; font-weight: 700; font-size: 1.15rem; }
+.fila-comp b { font-family: var(--display); font-weight: 400; font-size: 1.6rem; text-align: right; }
+.fila-comp small { grid-column: 2 / -1; color: var(--texto-2); font-size: .9rem; }
+.c-colchon .barra-progreso > span { background: var(--agua); }
+.c-antojo .barra-progreso > span { background: var(--rosa); }
+.c-ahorro .barra-progreso > span { background: var(--bien); }
+
+/* ---------- Simulador del emprendedor ---------- */
+.emprende { flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+.medidores { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.medidor { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: .3rem .8rem; padding: .8rem 1.1rem; border-radius: 1.1rem; background: var(--panel); }
+.medidor .nombre { font-weight: 700; }
+.medidor .barra-progreso { grid-column: 1 / -1; grid-row: 2; height: 1.1rem; }
+.medidor b { font-family: var(--display); font-weight: 400; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.m-bienestar .barra-progreso > span { background: linear-gradient(90deg, var(--oro), #ffd77a); }
+.m-negocio .barra-progreso > span { background: linear-gradient(90deg, var(--agua-osc), var(--agua)); }
+.delta { min-width: 2.6rem; text-align: center; font-family: var(--display); font-size: 1.1rem; border-radius: 999px; }
+.delta.sube { background: var(--bien); color: var(--tinta); animation: llega 220ms ease-out; }
+.delta.baja { background: var(--mal); color: var(--tinta); animation: llega 220ms ease-out; }
+.dilema { display: flex; align-items: center; justify-content: center; gap: 1.2rem; }
+.dilema .emoji { font-size: clamp(3.4rem, 6vw, 5rem); }
+.dilema .pregunta { margin: 0; padding: .4rem 0; text-align: left; font-size: clamp(1.8rem, 3vw, 2.8rem); }
+
+/* ---------- Maratón de pagos ---------- */
+.maraton {
+    position: relative; flex: 1; min-height: 20rem; display: grid; grid-template-rows: 1fr auto;
+    border-radius: 1.6rem; overflow: hidden; background: linear-gradient(180deg, #1d4740, #163a34);
+    box-shadow: inset 0 0 0 .25rem var(--linea);
+}
+.cielo { position: relative; touch-action: none; }
+.recibo {
+    position: absolute; z-index: 1; translate: -50% -50%; width: clamp(9rem, 15vw, 13rem);
+    display: grid; justify-items: center; gap: .15rem; padding: .7rem .6rem .9rem; border: 0;
+    background: #fffdf6; color: var(--tinta); text-align: center; touch-action: none; cursor: grab;
+    /* Recibo con borde dentado inferior. */
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 90% 100%, 80% 92%, 70% 100%, 60% 92%, 50% 100%, 40% 92%, 30% 100%, 20% 92%, 10% 100%, 0 92%);
+    filter: drop-shadow(0 .3rem 0 rgb(0 0 0 / .3));
+}
+.recibo .emoji { font-size: 2.2rem; }
+.recibo .concepto { font-weight: 700; font-size: .95rem; line-height: 1.15; }
+.recibo b { font-family: var(--display); font-weight: 400; font-size: 1.35rem; }
+.recibo.arrastrando { z-index: 3; cursor: grabbing; scale: 1.08; }
+.recibo.pagado { animation: paga 400ms ease-in forwards; }
+.recibo.fraude-pagado { animation: golpe 400ms ease-out forwards; background: #ffd9d4; }
+.recibo.vencido { animation: vence 400ms ease-out forwards; background: #ffd9d4; }
+.recibo.evitado { animation: recoge 400ms ease-out forwards; }
+@keyframes paga { to { translate: -50% 40vh; scale: .3; opacity: 0; } }
+@keyframes vence { to { translate: -50% 0; opacity: 0; } }
+.ventanilla {
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .3rem 1rem; padding: 1rem 1.2rem;
+    background: var(--blanco); color: var(--tinta); border-top: .4rem solid var(--oro);
+    transition: background var(--t);
+}
+.ventanilla .emoji { font-size: 2.4rem; }
+.ventanilla b { font-family: var(--display); font-weight: 400; font-size: 1.7rem; color: #6f1d38; }
+.ventanilla small { flex-basis: 100%; text-align: center; font-weight: 700; color: #4a5c57; }
+.ventanilla.lista { background: #dff7e6; }
+.ventanilla.alerta { background: #ffd9d4; animation: sacude 360ms; }
+
+/* ---------- Resultado con cierre FINABIEN ---------- */
+.cifras { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: .8rem; width: 100%; }
+.cifras > div { display: grid; gap: .2rem; padding: .8rem 1rem; border-radius: 1rem; background: rgb(0 0 0 / .18); }
+.cifras small { color: var(--texto-2); font-weight: 700; }
+.cifras b { font-family: var(--display); font-weight: 400; font-size: 2.2rem; line-height: 1; }
+.cifras .bien b { color: var(--bien); }
+.cifras .mal b { color: var(--mal); }
+.cierre-finabien {
+    width: 100%; display: grid; gap: .5rem; padding: 1.1rem 1.4rem; text-align: left;
+    border-radius: 1.2rem; background: var(--blanco); color: var(--tinta); border-left: .5rem solid #9d2449;
+}
+.cierre-finabien .etiqueta { color: #6f1d38; }
+.cierre-finabien h3 { font-size: 1.6rem; color: #235b4e; }
+.cierre-finabien ul { margin: 0; padding-left: 1.2rem; display: grid; gap: .3rem; font-size: 1.1rem; }
+.cierre-finabien small { color: #4a5c57; }
+.resultado.con-cierre .caja { gap: .9rem; }
+.resultado.con-cierre .grande { font-size: clamp(3rem, 7vw, 5.5rem); }
+
+
 /* ---------- Resultado / premios ---------- */
 .resultado { flex: 1; display: grid; place-items: center; text-align: center; }
 .resultado .caja { display: grid; gap: 1.2rem; justify-items: center; max-width: 54rem; }
@@ -431,9 +602,9 @@ body.con-sucursal .lado .panel { background: rgb(27 74 66 / .86); backdrop-filte
 @media (max-width: 1100px) {
     .inicio-grid, .hub { grid-template-columns: 1fr; }
     .inicio-grid { grid-template-areas: "logo" "hero" "lado"; grid-template-rows: auto; }
-    .juegos { grid-template-columns: 1fr; }
-    .juego-card { flex-direction: row; align-items: center; flex-wrap: wrap; }
-    .juego-card .ilustra { font-size: 3.4rem; }
+    .juegos-grid, .juegos-grid.n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .macetas { gap: .7rem; }
+    .cifras { grid-auto-flow: row; }
     .clasifica { grid-template-columns: 1fr 1fr; }
     .clasifica .tarjeta-central { grid-column: 1 / -1; grid-row: 1; max-width: 32rem; margin-inline: auto; }
     .cubeta { min-height: 8rem; }
@@ -443,6 +614,15 @@ body.con-sucursal .lado .panel { background: rgb(27 74 66 / .86); backdrop-filte
     .edades { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .avatares { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .memorama { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .juegos-grid, .juegos-grid.n4 { grid-template-columns: 1fr; }
+    .juego-card { flex-direction: row; align-items: center; flex-wrap: wrap; }
+    .macetas { grid-template-columns: 1fr; }
+    .maceta { flex-direction: row; justify-content: flex-start; min-height: 5rem; text-align: left; }
+    .maceta small { display: none; }
+    .maceta .monto { margin-left: auto; }
+    .medidores { grid-template-columns: 1fr; }
+    .fila-comp { grid-template-columns: 1fr auto; }
+    .fila-comp .barra-progreso { grid-column: 1 / -1; grid-row: 2; }
     .tecla { min-height: 3rem; font-size: 1.1rem; }
 }
 

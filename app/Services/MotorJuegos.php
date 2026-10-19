@@ -7,16 +7,20 @@ use App\Models\Par;
 use App\Models\Partida;
 use App\Models\Pregunta;
 use App\Models\Tarjeta;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Reglas y puntuación de los tres juegos. Las respuestas correctas nunca
+ * Reglas y puntuación de los juegos. Las respuestas correctas nunca
  * viajan al kiosco antes de contestar: el servidor califica cada respuesta.
+ * Los juegos de servicios FINABIEN viven en JuegosServicios.
  */
 class MotorJuegos
 {
-    public const JUEGOS = ['trivia', 'clasifica', 'memorama'];
+    public const JUEGOS = ['trivia', 'clasifica', 'memorama', 'remesa', 'cosecha', 'emprendedor', 'maraton'];
+
+    public function __construct(private JuegosServicios $servicios) {}
 
     /** @return array{partida: Partida, payload: array} */
     public function iniciar(Jugador $jugador, string $juego): array
@@ -26,10 +30,11 @@ class MotorJuegos
         $limite = config('reto.jugadas_con_puntos');
         $cuentaPuntos = $jugador->jugadasConPuntos()[$juego] < $limite;
 
-        [$items, $publico] = match ($juego) {
-            'trivia' => $this->prepararTrivia($grupo, $cfg['preguntas'][$grupo]),
-            'clasifica' => $this->prepararClasifica($grupo, $cfg['tarjetas']),
-            'memorama' => $this->prepararMemorama($grupo, $cfg['pares']),
+        [$items, $publico, $extra] = match ($juego) {
+            'trivia' => [...$this->prepararTrivia($grupo, $cfg['preguntas'][$grupo]), []],
+            'clasifica' => [...$this->prepararClasifica($grupo, $cfg['tarjetas']), []],
+            'memorama' => [...$this->prepararMemorama($grupo, $cfg['pares']), []],
+            default => $this->servicios->preparar($juego, $grupo),
         };
 
         if (count($items) === 0) {
@@ -61,7 +66,7 @@ class MotorJuegos
             $payload['titulo'] = config("reto.grupos.$grupo.titulo_clasifica");
         }
 
-        return ['partida' => $partida, 'payload' => $payload];
+        return ['partida' => $partida, 'payload' => $payload + $extra];
     }
 
     private function prepararTrivia(string $grupo, int $cuantas): array
@@ -150,11 +155,15 @@ class MotorJuegos
                 $acierto = $respuesta === $tarjeta->categoria;
                 $puntos = $acierto ? $cfg['puntos_acierto'] : 0;
                 $resultado = ['correcta' => $tarjeta->categoria, 'explicacion' => $tarjeta->explicacion];
+            } elseif ($partida->juego === 'emprendedor') {
+                $decision = $this->servicios->decidir($partida, $item, $respuesta);
+                ['acierto' => $acierto, 'puntos' => $puntos, 'resultado' => $resultado] = $decision;
+                $detalle[$itemId] = ['r' => $respuesta, 'ok' => $acierto, 'pts' => $puntos] + $decision['detalle'];
             } else {
-                throw ValidationException::withMessages(['juego' => 'El memorama se califica al terminar.']);
+                throw ValidationException::withMessages(['juego' => 'Este juego se califica al terminar.']);
             }
 
-            $detalle[$itemId] = ['r' => $respuesta, 'ok' => $acierto, 'ms' => $ms, 'pts' => $puntos];
+            $detalle[$itemId] ??= ['r' => $respuesta, 'ok' => $acierto, 'ms' => $ms, 'pts' => $puntos];
             $partida->detalle = $detalle;
             $partida->increment($acierto ? 'aciertos' : 'errores');
             $partida->puntos += $puntos;
@@ -184,6 +193,9 @@ class MotorJuegos
                 $partida->aciertos = count($partida->items);
                 $partida->errores = max(0, (int) ($datos['movimientos'] ?? 0) - count($partida->items));
                 $partida->detalle = ['movimientos' => (int) ($datos['movimientos'] ?? 0), 'segundos' => (int) ($datos['segundos'] ?? 0)];
+            } elseif (in_array($partida->juego, JuegosServicios::ARCADE, true)) {
+                $calificacion = $this->servicios->calificar($partida, $jugador->grupo, $datos);
+                $partida->fill(Arr::only($calificacion, ['puntos', 'aciertos', 'errores', 'detalle']));
             }
 
             // Se recalcula al cerrar: si el jugador abrió dos partidas a la vez, solo cuentan las permitidas.
@@ -238,6 +250,6 @@ class MotorJuegos
             'total_items' => count($partida->items),
             'cuenta_puntos' => $partida->cuenta_puntos,
             'jugador' => $jugador->paraKiosco(),
-        ];
+        ] + (in_array($partida->juego, JuegosServicios::ARCADE, true) ? ['detalle' => $partida->detalle] : []);
     }
 }

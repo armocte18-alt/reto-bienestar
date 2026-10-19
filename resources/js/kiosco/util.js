@@ -35,3 +35,35 @@ export function flotar(texto, ancla) {
 }
 
 export const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
+
+export const pesos = (n) => `$${fmt(Math.round(n))}`;
+
+/** "3, 2, 1, ¡Ya!" sobre el escenario de un arcade. Devuelve false si el juego se cerró mientras contaba. */
+export async function cuentaRegresiva(contenedor, sigue = () => true) {
+    const el = document.createElement('div');
+    el.className = 'cuenta-regresiva';
+    el.setAttribute('aria-live', 'assertive');
+    contenedor.append(el);
+    for (const paso of ['3', '2', '1', '¡Ya!']) {
+        if (!sigue()) break;
+        el.textContent = paso;
+        el.classList.remove('late');
+        void el.offsetWidth; // reinicia la animación
+        el.classList.add('late');
+        await esperar(paso === '¡Ya!' ? 450 : 700);
+    }
+    el.remove();
+    return sigue();
+}
+
+/** Tarjeta "Así te ayuda FINABIEN" del final de los juegos de servicios. El contenido viene de config/reto_servicios.php. */
+export function cierreFinabien(cierre) {
+    if (!cierre) return '';
+    return `
+        <div class="cierre-finabien">
+            <p class="etiqueta">Así te ayuda FINABIEN</p>
+            <h3>${esc(cierre.titulo)}</h3>
+            <ul>${cierre.puntos.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>
+            ${cierre.nota ? `<small>${esc(cierre.nota)}</small>` : ''}
+        </div>`;
+}

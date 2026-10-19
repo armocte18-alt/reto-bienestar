@@ -28,7 +28,9 @@
             <p class="text-sm text-billete-700">Partidas terminadas</p>
             <p class="mt-1 text-3xl font-bold tabular-nums">{{ number_format($partidas->sum()) }}</p>
             <p class="text-sm text-billete-700">
-                Trivia {{ $partidas['trivia'] ?? 0 }} · Decide {{ $partidas['clasifica'] ?? 0 }} · Memorama {{ $partidas['memorama'] ?? 0 }}
+                @foreach (config('reto.juegos') as $clave => $juego)
+                    {{ $juego['nombre'] }} {{ $partidas[$clave] ?? 0 }}@if (! $loop->last) · @endif
+                @endforeach
             </p>
         </div>
     </section>

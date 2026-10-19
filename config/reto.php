@@ -71,5 +71,52 @@ return [
             'castigo_por_movimiento' => 10,
             'segundos_minimos' => 8, // nadie resuelve 12 cartas más rápido; evita envíos falsos
         ],
+
+        /*
+        | Juegos de servicios FINABIEN. Textos, cifras y mensajes de cierre: config/reto_servicios.php.
+        | Los arcade (remesa, cosecha, maratón) se generan en el servidor y se recalifican al terminar.
+        */
+        'remesa' => [
+            'nombre' => 'El viaje de la remesa',
+            'segundos' => ['ninos' => 35, 'jovenes' => 40, 'adultos' => 40],
+            'intervalo_ms' => ['ninos' => 1100, 'jovenes' => 850, 'adultos' => 750], // entre oleadas
+            'viaje_ms' => ['ninos' => 3600, 'jovenes' => 3000, 'adultos' => 2700],   // de la orilla a la tarjeta
+            'dolares' => 300,
+            'puntos_bueno' => 12,
+            'castigo_obstaculo' => 15,
+            'puntos_min' => 30,
+            'puntos_max' => 300,
+        ],
+        'cosecha' => [
+            'nombre' => 'Cosecha tu ahorro',
+            'segundos' => 30,
+            'segundos_por_anio' => 5,          // 30 s de juego = 6 años de ahorro
+            'tasa_anual' => 0.10,              // ilustrativa; se muestra como tal en el cierre
+            'intervalo_ms' => ['ninos' => 1700, 'jovenes' => 1400, 'adultos' => 1250],
+            'valores' => ['ninos' => [10, 20, 50], 'jovenes' => [20, 50, 100], 'adultos' => [100, 200, 500]],
+            'perdida_colchon' => 0.3,          // parte del colchón que se pierde en el imprevisto
+            'peso_colchon' => 0.25,            // cuánto vale para los puntos un peso guardado en casa
+            'puntos_max' => 300,
+        ],
+        'emprendedor' => [
+            'nombre' => 'Simulador del emprendedor',
+            'rondas' => 5,
+            'inicio_barras' => 50,
+            'puntos_por_punto' => 2,           // puntos = (Δ bienestar + Δ negocio) × 2, máximo por ronda
+            'puntos_max_ronda' => 60,
+        ],
+        'maraton' => [
+            'nombre' => 'Maratón de pagos',
+            'segundos' => ['ninos' => 40, 'jovenes' => 45, 'adultos' => 45],
+            'intervalo_ms' => ['ninos' => 1500, 'jovenes' => 1200, 'adultos' => 1050],
+            'caida_ms' => ['ninos' => 7000, 'jovenes' => 6000, 'adultos' => 5400],
+            'fraude_pct' => ['ninos' => 12, 'jovenes' => 18, 'adultos' => 22],
+            'puntos_pago' => 12,
+            'castigo_fraude' => 30,
+            'puntos_max' => 300,
+        ],
     ],
+
+    // Margen para el reloj y la red al validar que un arcade duró lo que debía.
+    'arcade_tolerancia_seg' => 3,
 ];

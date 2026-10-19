@@ -1,10 +1,14 @@
 import { api } from './api.js';
 import { sonido } from './sonido.js';
 import { conectarTeclado, teclado } from './teclado.js';
-import { AVATARES, GRUPO_CLASE, esc, fmt, moneda } from './util.js';
+import { AVATARES, GRUPO_CLASE, cierreFinabien, esc, fmt, moneda } from './util.js';
 import { trivia } from './juegos/trivia.js';
 import { clasifica } from './juegos/clasifica.js';
 import { memorama } from './juegos/memorama.js';
+import { remesa } from './juegos/remesa.js';
+import { cosecha } from './juegos/cosecha.js';
+import { emprendedor } from './juegos/emprendedor.js';
+import { maraton } from './juegos/maraton.js';
 
 const app = document.getElementById('app');
 const RAIZ = (app.dataset.api ?? '/api').replace(/\/api$/, '');
@@ -61,7 +65,41 @@ const JUEGOS = {
             ? 'Voltea dos cartas a la vez y encuentra las parejas. ¡Entre menos intentos, más puntos!'
             : 'Voltea dos cartas y une cada palabra con su significado. Entre menos movimientos, más puntos.',
     },
+    remesa: {
+        icono: '💸', nombre: 'El viaje de la remesa', modulo: remesa,
+        desc: { ninos: 'Lleva el dinero de tu familia de Estados Unidos a México.', otro: 'Guía tu Tarjeta FINABIEN y esquiva los cobros que le quitan valor a tu envío.' },
+        intro: (g) => g === 'ninos'
+            ? 'Toca arriba, en medio o abajo para mover tu tarjeta. Junta monedas y esquiva lo que le quita dinero a tu familia.'
+            : 'Toca un carril o usa las flechas ↑ ↓. Junta beneficios y esquiva impuestos, cargos fantasma y fraudes.',
+    },
+    cosecha: {
+        icono: '🌱', nombre: 'Cosecha tu ahorro', modulo: cosecha,
+        desc: { ninos: 'Decide dónde guardar tu dinero y mira cómo crece.', otro: 'Colchón, antojos o ahorro formal: decide rápido y mira crecer tu dinero.' },
+        intro: (g) => g === 'ninos'
+            ? 'Te irá llegando dinero. Tócalo rápido y elige: ¿lo guardas bajo el colchón, te lo gastas o lo ahorras para que crezca?'
+            : 'Cada ingreso dura unos segundos. Mándalo al colchón, a los antojos o al ahorro formal (teclas 1, 2 y 3). Cada 5 segundos pasa un año.',
+    },
+    emprendedor: {
+        icono: '🏪', nombre: 'Simulador del emprendedor', modulo: emprendedor,
+        desc: { ninos: 'Atiende tu puesto de aguas frescas y toma buenas decisiones.', otro: 'Dirige un negocio: cada decisión mueve tu bienestar financiero y la salud del negocio.' },
+        intro: (g) => g === 'ninos'
+            ? 'Cada mes pasa algo en tu puesto. Elige qué hacer y mira cómo cambian tu dinero y tu puesto.'
+            : 'Vivirás varios meses de tu negocio. En cada dilema elige una opción: tus barras de bienestar y de negocio subirán o bajarán.',
+    },
+    maraton: {
+        icono: '🧾', nombre: 'Maratón de pagos', modulo: maraton,
+        desc: { ninos: 'Paga los recibos de la casa antes de que se venzan.', otro: 'Paga tus servicios en la ventanilla FINABIEN y no caigas en cobros falsos.' },
+        intro: (g) => g === 'ninos'
+            ? 'Van a caer recibos. Arrástralos o tócalos para pagarlos en la ventanilla. ¡Si te piden pagar para darte un premio, es trampa!'
+            : 'Arrastra o toca cada recibo para pagarlo antes de que llegue al piso. Los cobros falsos restan puntos: déjalos caer.',
+    },
 };
+
+// Filas del menú de juegos.
+const SECCIONES = [
+    { titulo: 'Retos de educación financiera', juegos: ['trivia', 'clasifica', 'memorama'] },
+    { titulo: 'Conoce los servicios FINABIEN', juegos: ['remesa', 'cosecha', 'emprendedor', 'maraton'] },
+];
 
 // ---------------------------------------------------------------- utilidades de pantalla
 
@@ -390,7 +428,13 @@ function pantallaHub() {
     const el = mostrar('hub', `
         ${barraJugador(j)}
         <div class="hub">
-            <section class="juegos" aria-label="Juegos">${['trivia', 'clasifica', 'memorama'].map(tarjeta).join('')}</section>
+            <div class="juegos">
+                ${SECCIONES.map((sec) => `
+                    <section class="juegos-fila" aria-label="${esc(sec.titulo)}">
+                        <h2 class="etiqueta">${esc(sec.titulo)}</h2>
+                        <div class="juegos-grid n${sec.juegos.length}">${sec.juegos.map(tarjeta).join('')}</div>
+                    </section>`).join('')}
+            </div>
             <aside class="panel meta-premio">
                 ${meta}
                 <button class="btn ${alcanzables.length ? 'btn-rosa' : 'btn-fantasma'}" style="width:100%" data-premios>
@@ -457,7 +501,7 @@ function jugar(clave, datos, titulo) {
             const m = el.querySelector('.marcador');
             if (m) m.innerHTML = moneda(p);
         },
-        alTerminar: (resumen, repaso) => pantallaResultado(resumen, repaso),
+        alTerminar: (resumen, repaso, cierre) => pantallaResultado(resumen, repaso, cierre),
         salir: pantallaHub,
     };
     S.limpiarJuego = JUEGOS[clave].modulo(ctx);
@@ -477,25 +521,30 @@ function jugar(clave, datos, titulo) {
     });
 }
 
-function pantallaResultado(resumen, repaso = []) {
+/**
+ * @param cierre Opcional, de los juegos de servicios: { titulo, html, cierre } con el resumen
+ *               propio del juego (ya escapado) y la tarjeta "Así te ayuda FINABIEN".
+ */
+function pantallaResultado(resumen, repaso = [], cierre = null) {
     S.jugador = resumen.jugador;
     const r = resumen;
-    const titulo = r.juego === 'memorama'
+    const titulo = cierre?.titulo ?? (r.juego === 'memorama'
         ? '¡Encontraste todas las parejas!'
-        : r.aciertos === r.total_items ? '¡Perfecto!' : r.aciertos >= r.total_items / 2 ? '¡Muy bien!' : '¡Buen intento!';
-    const detalle = r.juego === 'memorama' ? '' : `<p>${r.aciertos} de ${r.total_items} correctas</p>`;
+        : r.aciertos === r.total_items ? '¡Perfecto!' : r.aciertos >= r.total_items / 2 ? '¡Muy bien!' : '¡Buen intento!');
+    const detalle = cierre?.html ?? (r.juego === 'memorama' ? '' : `<p>${r.aciertos} de ${r.total_items} correctas</p>`);
     const nota = r.cuenta_puntos
         ? `<p>Sumaste <strong>${fmt(r.puntos)}</strong> puntos. Ahora tienes ${fmt(r.jugador.puntos)}.</p>`
         : `<p>Fue una partida de práctica: no suma puntos. Prueba otro juego.</p>`;
     sonido.fin();
 
     const el = mostrar('resultado', `
-        <div class="resultado"><div class="caja">
+        <div class="resultado ${cierre ? 'con-cierre' : ''}"><div class="caja">
             ${fibi('fibi-mini fibi-festeja')}
             <h2>${titulo}</h2>
             <div class="grande"><span class="moneda" aria-hidden="true"></span>${r.cuenta_puntos ? '+' : ''}${fmt(r.puntos)}</div>
             ${detalle}
             ${nota}
+            ${cierreFinabien(cierre?.cierre)}
             ${repaso.length ? `<div class="repaso"><p class="etiqueta">Para repasar</p>${repaso.slice(0, 3).map((x) => `<div><strong>${esc(x.titulo)}</strong><span>${esc(x.texto)}</span></div>`).join('')}</div>` : ''}
             <div class="acciones">
                 <button class="btn btn-xl" data-otro>Jugar otro juego</button>
