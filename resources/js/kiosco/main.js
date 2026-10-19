@@ -105,7 +105,7 @@ function pantallaInicio() {
         <div class="inicio-grid">
             <section class="hero">
                 <p class="etiqueta">${esc(c.evento?.nombre ?? 'Educación financiera')}${c.evento?.sede ? ` · ${esc(c.evento.sede)}` : ''}</p>
-                <h1>Reto <span>Bienestar</span></h1>
+                <h1>Reto <span>Finabien</span></h1>
                 <p class="lema">Juega, aprende a cuidar tu dinero y junta puntos para ganar premios.</p>
                 <div class="acciones">
                     <button class="btn btn-xl" data-ir="registro">¡Quiero jugar!</button>

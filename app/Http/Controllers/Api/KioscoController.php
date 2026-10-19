@@ -164,7 +164,7 @@ class KioscoController extends Controller
     private function nuevoFolio(): string
     {
         do {
-            $folio = 'RB-'.Str::upper(Str::random(5));
+            $folio = 'RF-'.Str::upper(Str::random(5));
         } while (Canje::where('folio', $folio)->exists());
 
         return $folio;

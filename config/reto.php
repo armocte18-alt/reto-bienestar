@@ -2,7 +2,7 @@
 
 /*
 |--------------------------------------------------------------------------
-| Reto Bienestar — reglas del juego
+| Reto Finabien — reglas del juego
 |--------------------------------------------------------------------------
 | Todo lo que el equipo del stand puede querer ajustar sin tocar código.
 */

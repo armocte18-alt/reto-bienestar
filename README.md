@@ -1,4 +1,4 @@
-# reto-bienestar
+# Reto Finabien (reto-bienestar)
 
 Juego para las ferias o eventos de educación financiera de FINABIEN. Corre en una PC conectada a una TV o en una tablet: cada persona se registra con su nombre y su edad, juega, acumula puntos y los canjea por premios en el stand.
 
@@ -58,7 +58,7 @@ Se agrega en `Apache24\conf\extra\httpd-vhosts.conf`:
 ```apache
 <VirtualHost *:80>
     ServerName reto-finabien.com
-    ServerAlias www.reto-finabien.com reto-finabien.com.192.168.0.189.nip.io www.reto-finabien.com.192.168.0.189.nip.io
+    ServerAlias www.reto-finabien.com reto-finabien.com.*.nip.io www.reto-finabien.com.*.nip.io
     DocumentRoot "D:/Servidor/www/reto-bienestar/public"
     <Directory "D:/Servidor/www/reto-bienestar/public">
         Options FollowSymLinks
@@ -77,7 +77,15 @@ En `C:\Windows\System32\drivers\etc\hosts` (como administrador):
 127.0.0.1   www.reto-finabien.com
 ```
 
-Reinicia el servicio **Apache2.4** como administrador. Las tablets de la misma red entran con `http://www.reto-finabien.com.192.168.0.189.nip.io` sin tocar su archivo hosts.
+Reinicia el servicio **Apache2.4** como administrador.
+
+### Tablets
+
+Las tablets conectadas a la misma red entran con `http://www.reto-finabien.com.<IP>.nip.io`, donde `<IP>` es la dirección IPv4 del servidor (se ve con `ipconfig`). Por ejemplo, con la IP 172.20.10.5: `http://www.reto-finabien.com.172.20.10.5.nip.io`.
+
+- El comodín `*.nip.io` del VirtualHost acepta cualquier IP, así que no hay que editar Apache al cambiar de red.
+- nip.io necesita internet para resolver el nombre.
+- Abrir solo la IP (`http://172.20.10.5`) muestra el primer sitio de Apache, no este.
 
 ## Producción (`C:\Servidor\www`)
 

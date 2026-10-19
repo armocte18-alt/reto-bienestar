@@ -110,7 +110,7 @@ class RetoBienestarTest extends TestCase
         $stock = $premio->stock;
 
         $r = $this->postJson("/api/jugadores/{$j['codigo']}/canjes", ['premio' => $premio->id])->assertCreated()->json();
-        $this->assertStringStartsWith('RB-', $r['folio']);
+        $this->assertStringStartsWith('RF-', $r['folio']);
         $this->assertSame(50, $r['jugador']['puntos']);
         $this->assertSame($stock - 1, $premio->fresh()->stock);
 
@@ -129,7 +129,7 @@ class RetoBienestarTest extends TestCase
 
     public function test_kiosco_carga(): void
     {
-        $this->get('/')->assertOk()->assertSee('Reto Bienestar');
+        $this->get('/')->assertOk()->assertSee('Reto Finabien');
         $this->getJson('/api/configuracion')->assertOk()->assertJsonStructure(['grupos', 'premios', 'ranking', 'avatares']);
     }
 }

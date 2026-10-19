@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('titulo', 'Panel') · Reto Bienestar</title>
+    <title>@yield('titulo', 'Panel') · Reto Finabien</title>
     @vite(['resources/css/app.css'])
 </head>
 <body class="min-h-screen bg-billete-100 text-billete-950 antialiased">
     <header class="bg-billete-900 text-white">
         <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-            <a href="{{ route('staff.inicio') }}" class="text-lg font-bold">Reto Bienestar <span class="font-normal text-oro-400">· Staff</span></a>
+            <a href="{{ route('staff.inicio') }}" class="text-lg font-bold">Reto Finabien <span class="font-normal text-oro-400">· Staff</span></a>
             @if (session('staff'))
                 <nav class="flex flex-wrap gap-1 text-sm">
                     @foreach ([
